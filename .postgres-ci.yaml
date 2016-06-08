@@ -1,0 +1,11 @@
+images:
+  - postgresci/golang:1.6
+  - postgresci/golang:1.7
+entrypoint:
+  - /sbin/init
+commands:
+  - go version
+  - sh test_setup.sh
+  - echo === Tests ===
+tests:
+  - go test -cover -v github.com/postgres-ci/notifier/src/worker
