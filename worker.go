@@ -2,6 +2,7 @@ package main
 
 import (
 	log "github.com/Sirupsen/logrus"
+	"github.com/postgres-ci/notifier/src/app"
 	"github.com/postgres-ci/notifier/src/common"
 
 	"flag"
@@ -87,5 +88,12 @@ func main() {
 		log.SetLevel(config.LogLevel())
 	}
 
-	log.Debug(config)
+	app := app.New(config)
+
+	if debug {
+
+		app.SetDebugMode()
+	}
+
+	app.Run()
 }

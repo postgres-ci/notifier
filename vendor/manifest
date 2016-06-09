@@ -20,6 +20,12 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/tucnak/telebot",
+			"repository": "https://github.com/tucnak/telebot",
+			"revision": "68ad7fd5dcdbfdc4f6513e0195ad6edb2c3e0573",
+			"branch": "master"
+		},
+		{
 			"importpath": "gopkg.in/airbrake/gobrake.v2",
 			"repository": "https://gopkg.in/airbrake/gobrake.v2",
 			"revision": "31c8ff1fb8b79a6947e6565e9a6df535f98a6b94",
