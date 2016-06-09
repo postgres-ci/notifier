@@ -39,8 +39,12 @@ func New(config common.Config) *app {
 		connect: connect,
 		plugins: []plugin{
 			email.New(config),
-			telegram.New(config.Telegram.Token, connect),
 		},
+	}
+
+	if bot, err := telegram.New(config.Telegram.Token, connect); err == nil {
+
+		app.plugins = append(app.plugins, bot)
 	}
 
 	return &app
@@ -72,7 +76,5 @@ func (a *app) Run() {
 		go a.debugInfo()
 	}
 
-	t := make(chan struct{})
-
-	<-t
+	a.listen()
 }

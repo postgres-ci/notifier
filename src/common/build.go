@@ -8,7 +8,7 @@ import (
 
 type Build struct {
 	ID                int32      `db:"build_id"`
-	Status            string     `db:"status"`
+	Status            string     `db:"build_status"`
 	Branch            string     `db:"branch"`
 	Error             string     `db:"build_error"`
 	CreatedAt         time.Time  `db:"build_created_at"`
