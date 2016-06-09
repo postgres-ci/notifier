@@ -1,0 +1,19 @@
+app_address : "http://185.143.172.56"
+loglevel    : "info" # info/warning/error
+templates : "assets/templates/"
+
+connect:
+  host: "/var/run/postgresql"
+  port: 5432
+  username: "postgres_ci"
+  password: "iAmAdiscoDancer"
+  database: "postgres_ci"
+
+smtp:
+  host: "smtp.host.com"
+  port: 25
+  username: "postgres_ci"
+  password: "iAmAdiscoDancer"
+
+telegram:
+  token: "432542435:AaDSAHMgMt8Qasdfa-3GDSSSSf3OkBPkgzGDae3s"

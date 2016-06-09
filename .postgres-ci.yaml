@@ -8,4 +8,4 @@ commands:
   - sh test_setup.sh
   - echo === Tests ===
 tests:
-  - go test -cover -v github.com/postgres-ci/notifier/src/worker
+  - go test -cover -v github.com/postgres-ci/notifier/src/app
