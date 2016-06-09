@@ -3,18 +3,19 @@ package telegram
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/jmoiron/sqlx"
-	"github.com/postgres-ci/notifier/src/common"
 	"github.com/tucnak/telebot"
 
-	"database/sql"
-	"fmt"
 	"strings"
 	"time"
 )
 
+const (
+	Method = "telegram"
+)
+
 func New(token string, connect *sqlx.DB) (*bot, error) {
 
-	telebot, err := telebot.NewBot(token)
+	telegramBot, err := telebot.NewBot(token)
 
 	if err != nil {
 
@@ -24,162 +25,47 @@ func New(token string, connect *sqlx.DB) (*bot, error) {
 	}
 
 	bot := &bot{
-		token:   token,
-		telebot: telebot,
-		connect: connect,
+		telebot:  telegramBot,
+		connect:  connect,
+		messages: make(chan telebot.Message),
 	}
 
-	go bot.listen()
+	bot.telebot.Listen(bot.messages, time.Second)
+
+	for i := 0; i < 5; i++ {
+
+		go bot.listen()
+	}
 
 	return bot, nil
 }
 
 type bot struct {
-	token   string
-	telebot *telebot.Bot
-	connect *sqlx.DB
-}
-
-const (
-	Method = "telegram"
-)
-
-func (b *bot) Send(build common.Build) error {
-
-	log.Debugf("Telegram send notify, build [%d]", build.ID)
-
-	for _, recipient := range build.SendTo {
-
-		if recipient.Method != Method {
-
-			log.Debugf("Telegram. Skip %s", recipient.Name)
-		} else {
-
-			b.telebot.SendMessage(&user{TelegramID: recipient.IntID}, build.CommitMessage, nil)
-		}
-	}
-
-	return nil
+	connect  *sqlx.DB
+	telebot  *telebot.Bot
+	messages chan telebot.Message
 }
 
 func (b *bot) listen() {
 
-	messages := make(chan telebot.Message)
-	b.telebot.Listen(messages, time.Second)
-
-	for message := range messages {
+	for message := range b.messages {
 
 		switch strings.ToLower(message.Text) {
-
 		case "/subscribe":
 			b.subscribe(message)
 		case "/unsubscribe":
 			b.unsubscribe(message)
 		default:
-
-			if err := b.telebot.SendMessage(message.Chat, UsageMessage, nil); err != nil {
-
-				log.Warnf("Telegram Bot can not send message: %v", err)
-			}
+			b.SendMessage(message.Chat, UsageMessage, nil)
 		}
 	}
 }
 
-type user struct {
-	ID         int32 `db:"user_id"`
-	TelegramID int64 `db:"telegram_id"`
-}
+func (b *bot) SendMessage(recipient telebot.Recipient, message string, options *telebot.SendOptions) {
 
-func (u *user) Destination() string {
+	if err := b.telebot.SendMessage(recipient, message, options); err != nil {
 
-	return fmt.Sprint(u.TelegramID)
-}
-
-func (b *bot) subscribe(message telebot.Message) {
-
-	var user user
-
-	err := b.connect.Get(&user, `SELECT user_id, telegram_id FROM notification.find_user_by_telegram_username($1)`, message.Sender.Username)
-
-	if err != nil {
-
-		if err == sql.ErrNoRows {
-
-			if err := b.telebot.SendMessage(message.Chat, "Not found", nil); err != nil {
-
-				log.Warnf("Telegram Bot can not send message: %v", err)
-			}
-		} else {
-
-			if err := b.telebot.SendMessage(message.Chat, err.Error(), nil); err != nil {
-
-				log.Warnf("Telegram Bot can not send message: %v", err)
-			}
-		}
-
-		return
-	}
-
-	_, err = b.connect.Exec(`SELECT notification.bind_with_telegram(
-			$1,
-			$2,
-			$3
-		)`,
-
-		user.ID,
-		message.Sender.Username,
-		message.Sender.ID,
-	)
-
-	user.TelegramID = int64(message.Sender.ID)
-
-	if err == nil {
-
-		b.telebot.SendMessage(&user, "Ok, subscribed", nil)
-	}
-}
-
-func (b *bot) unsubscribe(message telebot.Message) {
-
-	var user user
-
-	err := b.connect.Get(&user, `SELECT user_id, telegram_id FROM notification.find_user_by_telegram_username($1)`, message.Sender.Username)
-
-	if err != nil {
-
-		if err == sql.ErrNoRows {
-
-			if err := b.telebot.SendMessage(message.Chat, "Not found", nil); err != nil {
-
-				log.Warnf("Telegram Bot can not send message: %v", err)
-			}
-		} else {
-
-			if err := b.telebot.SendMessage(message.Chat, err.Error(), nil); err != nil {
-
-				log.Warnf("Telegram Bot can not send message: %v", err)
-			}
-		}
-
-		return
-	}
-
-	_, err = b.connect.Exec(`SELECT notification.bind_with_telegram(
-			$1,
-			$2,
-			$3
-		)`,
-
-		user.ID,
-		message.Sender.Username,
-		0,
-	)
-
-	user.TelegramID = int64(message.Sender.ID)
-
-	if err == nil {
-
-		b.telebot.SendMessage(&user, "Ok, unsubscribed", nil)
+		log.Errorf("Error when sending telegram message: %v", err)
 	}
 }
 
