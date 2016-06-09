@@ -8,6 +8,19 @@
 			"branch": "master"
 		},
 		{
+			"importpath": "github.com/davecgh/go-spew/spew",
+			"repository": "https://github.com/davecgh/go-spew",
+			"revision": "5215b55f46b2b919f50a1df0eaa5886afe4e3b3d",
+			"branch": "master",
+			"path": "/spew"
+		},
+		{
+			"importpath": "github.com/flosch/pongo2",
+			"repository": "https://github.com/flosch/pongo2",
+			"revision": "7f5515449ea9bbeb00256d9cbb654c556e7d0146",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/jmoiron/sqlx",
 			"repository": "https://github.com/jmoiron/sqlx",
 			"revision": "e4a302b8d3a49ad2790f2232df7fcd668f54366f",
@@ -18,6 +31,20 @@
 			"repository": "https://github.com/lib/pq",
 			"revision": "ee1442bda7bd1b6a84e913bdb421cb1874ec629d",
 			"branch": "master"
+		},
+		{
+			"importpath": "github.com/pmezard/go-difflib/difflib",
+			"repository": "https://github.com/pmezard/go-difflib",
+			"revision": "792786c7400a136282c1664665ae0a8db921c6c2",
+			"branch": "master",
+			"path": "/difflib"
+		},
+		{
+			"importpath": "github.com/stretchr/testify/assert",
+			"repository": "https://github.com/stretchr/testify",
+			"revision": "8d64eb7173c7753d6419fd4a9caf057398611364",
+			"branch": "master",
+			"path": "/assert"
 		},
 		{
 			"importpath": "github.com/tucnak/telebot",

@@ -30,7 +30,7 @@ func New(token string, connect *sqlx.DB) (*bot, error) {
 		messages: make(chan telebot.Message),
 	}
 
-	bot.telebot.Listen(bot.messages, time.Second)
+	telegramBot.Listen(bot.messages, time.Second)
 
 	for i := 0; i < 5; i++ {
 
@@ -41,8 +41,10 @@ func New(token string, connect *sqlx.DB) (*bot, error) {
 }
 
 type bot struct {
-	connect  *sqlx.DB
-	telebot  *telebot.Bot
+	connect *sqlx.DB
+	telebot interface {
+		SendMessage(telebot.Recipient, string, *telebot.SendOptions) error
+	}
 	messages chan telebot.Message
 }
 

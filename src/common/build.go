@@ -26,14 +26,14 @@ type Build struct {
 	SendTo            recipients `db:"send_to"`
 }
 
-type recipient struct {
+type Recipient struct {
 	Name   string `json:"user_name"`
 	Method string `json:"notify_method"`
 	TextID string `json:"notify_text_id"`
 	IntID  int64  `json:"notify_int_id"`
 }
 
-type recipients []recipient
+type recipients []Recipient
 
 func (r *recipients) Scan(src interface{}) error {
 
