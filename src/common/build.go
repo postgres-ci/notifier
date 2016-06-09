@@ -9,6 +9,8 @@ import (
 type Build struct {
 	ID                int32      `db:"build_id"`
 	Status            string     `db:"build_status"`
+	ProjectID         int32      `db:"project_id"`
+	ProjectName       string     `db:"project_name"`
 	Branch            string     `db:"branch"`
 	Error             string     `db:"build_error"`
 	CreatedAt         time.Time  `db:"build_created_at"`

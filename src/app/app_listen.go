@@ -91,6 +91,8 @@ const checkNotificationsSql = `
 	SELECT 
 		build_id,
 		build_status,
+		project_id,
+		project_name,
 		branch,
 		build_error,
 		build_created_at,
