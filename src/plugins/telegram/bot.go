@@ -15,6 +15,13 @@ const (
 
 func New(token string, connect *sqlx.DB) (*bot, error) {
 
+	if token == "" {
+
+		return &bot{
+			connect: connect,
+		}, nil
+	}
+
 	telegramBot, err := telebot.NewBot(token)
 
 	if err != nil {
@@ -66,6 +73,11 @@ func (b *bot) listen() {
 }
 
 func (b *bot) SendMessage(recipient telebot.Recipient, message string, options *telebot.SendOptions) {
+
+	if b.telebot == nil {
+
+		return
+	}
 
 	log.Debugf("telegram send: %s to %s", message, recipient.Destination())
 

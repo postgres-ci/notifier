@@ -34,7 +34,7 @@ func (b *bot) Send(build common.Build) error {
 
 	for _, recipient := range build.SendTo {
 
-		if recipient.Method == Method {
+		if recipient.Method == Method && recipient.IntID != 0 {
 
 			b.SendMessage(&user{TelegramID: recipient.IntID}, message, &telebot.SendOptions{ParseMode: telebot.ModeHTML})
 		}

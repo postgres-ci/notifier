@@ -166,6 +166,10 @@ func TestTelegramDoNotSendMessage(t *testing.T) {
 				Method: "email",
 				TextID: "samelephant82@gmail.com",
 			},
+			{
+				Method: "telegram",
+				IntID:  0,
+			},
 		},
 	})
 
@@ -192,7 +196,7 @@ func TestTelegramSendToMultipleUsers(t *testing.T) {
 
 	var recipients []common.Recipient
 
-	for i := 0; i < 42; i++ {
+	for i := 1; i <= 42; i++ {
 		recipients = append(recipients, common.Recipient{
 			Method: "telegram",
 			IntID:  int64(i),
