@@ -6,7 +6,7 @@ import (
 	"github.com/tucnak/telebot"
 )
 
-var template = pongo2.Must(pongo2.FromString(`{% autoescape off %}
+var template = pongo2.Must(pongo2.FromString(`
 {% if build.Status == "success" %}
 <b>Build #{{ build.ID }} has passed</b>
 {% else %}
@@ -18,7 +18,7 @@ var template = pongo2.Must(pongo2.FromString(`{% autoescape off %}
 {{ build.CommitMessage }}
 
 sha: {% if APP_ADDRESS %}<a href="{{APP_ADDRESS}}/project-{{ build.ProjectID }}/build-{{ build.ID }}/">{{ build.CommitSHA }}</a>{% else %}{{ build.CommitSHA }}{% endif %}
-{% endautoescape %}`))
+`))
 
 func (b *bot) Send(build common.Build) error {
 
