@@ -53,17 +53,21 @@ func (b *bot) listen() {
 	for message := range b.messages {
 
 		switch strings.ToLower(message.Text) {
+		case "/status":
+			b.status(message)
 		case "/subscribe":
 			b.subscribe(message)
 		case "/unsubscribe":
 			b.unsubscribe(message)
 		default:
-			b.SendMessage(message.Chat, UsageMessage, nil)
+			b.SendMessage(message.Chat, UsageMessage, &telebot.SendOptions{ParseMode: telebot.ModeHTML})
 		}
 	}
 }
 
 func (b *bot) SendMessage(recipient telebot.Recipient, message string, options *telebot.SendOptions) {
+
+	log.Debugf("telegram send: %s to %s", message, recipient.Destination())
 
 	if err := b.telebot.SendMessage(recipient, message, options); err != nil {
 
@@ -73,8 +77,11 @@ func (b *bot) SendMessage(recipient telebot.Recipient, message string, options *
 
 const (
 	UsageMessage = `
-	Usage:
-		/subscribe
-		/unsubscribe
+Hello, i'm a <b>Postgres-CI</b> notifier
+
+commands:
+	/status
+	/subscribe
+	/unsubscribe
 	`
 )

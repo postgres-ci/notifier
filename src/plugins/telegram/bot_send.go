@@ -3,20 +3,21 @@ package telegram
 import (
 	"github.com/flosch/pongo2"
 	"github.com/postgres-ci/notifier/src/common"
+	"github.com/tucnak/telebot"
 )
 
 var template = pongo2.Must(pongo2.FromString(`{% autoescape off %}
 {% if build.Status == "failed" %}
-Build failed
+<b>Build failed</b>
 {% else %}
-Build success
+<b>Build success</b>
 {% endif %}
-{{ build.ProjectName }} ({{ build.Branch }})
+<b>{{ build.ProjectName }}</b> (<i>{{ build.Branch }}</i>)
 
 {{ build.CommitterName }} ({{ build.CommitterEmail }}) at {{ build.CommittedAt | time:"Mon, 02 Jan 2006 15:04:05 -0700" }}
  
 {{ build.CommitMessage }}
-{% if build.Error %}{{ build.Error }}{% endif %}
+{% if build.Error %}<pre>{{ build.Error }}</pre>{% endif %}
 sha: {{ build.CommitSHA }}
 {% endautoescape %}`))
 
@@ -35,7 +36,7 @@ func (b *bot) Send(build common.Build) error {
 
 		if recipient.Method == Method {
 
-			b.SendMessage(&user{TelegramID: recipient.IntID}, message, nil)
+			b.SendMessage(&user{TelegramID: recipient.IntID}, message, &telebot.SendOptions{ParseMode: telebot.ModeHTML})
 		}
 	}
 

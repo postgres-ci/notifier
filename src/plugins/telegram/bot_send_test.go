@@ -16,10 +16,11 @@ type testSender struct {
 }
 
 func (t *testSender) SendMessage(recipient telebot.Recipient, message string, options *telebot.SendOptions) error {
+
 	return t.send(recipient, message, options)
 }
 
-func TestSendSuccess(t *testing.T) {
+func TestTelegramSendSuccessBuild(t *testing.T) {
 
 	log.SetOutput(&bytes.Buffer{})
 
@@ -76,17 +77,12 @@ func TestSendSuccess(t *testing.T) {
 
 			assert.Contains(t, sendedMessage, contains)
 		}
-
 	}
-
-	t.Log(sendedMessage)
 }
 
-func TestSendFailedBuild(t *testing.T) {
+func TestTelegramSendFailedBuild(t *testing.T) {
 
-	buildError := `
-ERROR:  unrecognized GET DIAGNOSTICS item at or near "table_name"
-	`
+	buildError := `ERROR:  unrecognized GET DIAGNOSTICS item at or near "table_name"`
 
 	log.SetOutput(&bytes.Buffer{})
 
@@ -144,8 +140,68 @@ ERROR:  unrecognized GET DIAGNOSTICS item at or near "table_name"
 
 			assert.Contains(t, sendedMessage, contains)
 		}
+	}
+}
 
+func TestTelegramDoNotSendMessage(t *testing.T) {
+
+	log.SetOutput(&bytes.Buffer{})
+
+	var count int
+
+	sender := &testSender{
+		send: func(telebot.Recipient, string, *telebot.SendOptions) error {
+			count++
+			return nil
+		},
 	}
 
-	t.Log(sendedMessage)
+	bot := bot{
+		telebot: sender,
+	}
+
+	bot.Send(common.Build{
+		SendTo: []common.Recipient{
+			{
+				Method: "email",
+				TextID: "samelephant82@gmail.com",
+			},
+		},
+	})
+
+	assert.Equal(t, 0, count)
+}
+func TestTelegramSendToMultipleUsers(t *testing.T) {
+
+	log.SetOutput(&bytes.Buffer{})
+
+	var count int
+
+	sender := &testSender{
+		send: func(telebot.Recipient, string, *telebot.SendOptions) error {
+
+			count++
+
+			return nil
+		},
+	}
+
+	bot := bot{
+		telebot: sender,
+	}
+
+	var recipients []common.Recipient
+
+	for i := 0; i < 42; i++ {
+		recipients = append(recipients, common.Recipient{
+			Method: "telegram",
+			IntID:  int64(i),
+		})
+	}
+
+	bot.Send(common.Build{
+		SendTo: recipients,
+	})
+
+	assert.Equal(t, len(recipients), count)
 }

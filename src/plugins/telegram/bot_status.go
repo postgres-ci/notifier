@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-func (b *bot) unsubscribe(message telebot.Message) {
+func (b *bot) status(message telebot.Message) {
 
 	var currentUser user
 
@@ -34,27 +34,5 @@ func (b *bot) unsubscribe(message telebot.Message) {
 		return
 	}
 
-	if currentUser.TelegramID != int64(message.Sender.ID) {
-
-		b.SendMessage(message.Chat, "Sender ID is not matched", nil)
-
-		return
-	}
-
-	_, err = b.connect.Exec(`SELECT notification.bind_with_telegram(
-			$1,
-			$2,
-			$3
-		)`,
-
-		currentUser.ID,
-		message.Sender.Username,
-		0,
-	)
-
-	if err == nil {
-		b.SendMessage(&user{TelegramID: int64(message.Sender.ID)}, "Ok, unsubscribed", nil)
-	} else {
-		b.SendMessage(message.Chat, "An error occurred please try again later", nil)
-	}
+	b.SendMessage(message.Chat, "You are already subscribed", nil)
 }
