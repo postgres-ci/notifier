@@ -65,7 +65,7 @@ func TestTelegramSendSuccessBuild(t *testing.T) {
 	if assert.Equal(t, "42", telegramID) {
 
 		for _, contains := range []string{
-			"success",
+			"passed",
 			"Postgres-CI test project",
 			"testbranch",
 			"6ba05bc0e064d5ad9b6044199edb99c1aca7f024",

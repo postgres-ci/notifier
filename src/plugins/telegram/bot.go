@@ -3,6 +3,7 @@ package telegram
 import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/jmoiron/sqlx"
+	"github.com/postgres-ci/notifier/src/common"
 	"github.com/tucnak/telebot"
 
 	"strings"
@@ -13,16 +14,17 @@ const (
 	Method = "telegram"
 )
 
-func New(token string, connect *sqlx.DB) (*bot, error) {
+func New(config common.Config, connect *sqlx.DB) (*bot, error) {
 
-	if token == "" {
+	if config.Telegram.Token == "" {
 
 		return &bot{
+			config:  config,
 			connect: connect,
 		}, nil
 	}
 
-	telegramBot, err := telebot.NewBot(token)
+	telegramBot, err := telebot.NewBot(config.Telegram.Token)
 
 	if err != nil {
 
@@ -33,6 +35,7 @@ func New(token string, connect *sqlx.DB) (*bot, error) {
 
 	bot := &bot{
 		telebot:  telegramBot,
+		config:   config,
 		connect:  connect,
 		messages: make(chan telebot.Message),
 	}
@@ -49,6 +52,7 @@ func New(token string, connect *sqlx.DB) (*bot, error) {
 
 type bot struct {
 	connect *sqlx.DB
+	config  common.Config
 	telebot interface {
 		SendMessage(telebot.Recipient, string, *telebot.SendOptions) error
 	}

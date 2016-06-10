@@ -42,7 +42,7 @@ func New(config common.Config) *app {
 		},
 	}
 
-	if bot, err := telegram.New(config.Telegram.Token, connect); err == nil {
+	if bot, err := telegram.New(config, connect); err == nil {
 
 		app.plugins = append(app.plugins, bot)
 	}

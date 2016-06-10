@@ -7,24 +7,24 @@ import (
 )
 
 var template = pongo2.Must(pongo2.FromString(`{% autoescape off %}
-{% if build.Status == "failed" %}
-<b>Build failed</b>
+{% if build.Status == "success" %}
+<b>Build #{{ build.ID }} has passed</b>
 {% else %}
-<b>Build success</b>
+<b>Build #{{ build.ID }} has failed</b>
 {% endif %}
 <b>{{ build.ProjectName }}</b> (<i>{{ build.Branch }}</i>)
-
-{{ build.CommitterName }} ({{ build.CommitterEmail }}) at {{ build.CommittedAt | time:"Mon, 02 Jan 2006 15:04:05 -0700" }}
- 
-{{ build.CommitMessage }}
 {% if build.Error %}<pre>{{ build.Error }}</pre>{% endif %}
-sha: {{ build.CommitSHA }}
+{{ build.CommitterName }} ({{ build.CommitterEmail }}) at {{ build.CommittedAt | time:"Mon, 02 Jan 2006 15:04:05 -0700" }}
+{{ build.CommitMessage }}
+
+sha: {% if APP_ADDRESS %}<a href="{{APP_ADDRESS}}/project-{{ build.ProjectID }}/build-{{ build.ID }}/">{{ build.CommitSHA }}</a>{% else %}{{ build.CommitSHA }}{% endif %}
 {% endautoescape %}`))
 
 func (b *bot) Send(build common.Build) error {
 
 	message, err := template.Execute(pongo2.Context{
-		"build": build,
+		"APP_ADDRESS": b.config.AppAddress,
+		"build":       build,
 	})
 
 	if err != nil {
@@ -36,7 +36,7 @@ func (b *bot) Send(build common.Build) error {
 
 		if recipient.Method == Method && recipient.IntID != 0 {
 
-			b.SendMessage(&user{TelegramID: recipient.IntID}, message, &telebot.SendOptions{ParseMode: telebot.ModeHTML})
+			b.SendMessage(&user{TelegramID: recipient.IntID}, message, &telebot.SendOptions{ParseMode: telebot.ModeHTML, DisableWebPagePreview: true})
 		}
 	}
 
