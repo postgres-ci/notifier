@@ -68,11 +68,7 @@ func (a *app) checkNotifications() {
 
 		if err := a.connect.Get(&build, checkNotificationsSql); err != nil {
 
-			if err == sql.ErrNoRows {
-
-				log.Debug("All notifications fetched")
-
-			} else {
+			if err != sql.ErrNoRows {
 
 				log.Errorf("Error when fetching notifications: %v", err)
 			}

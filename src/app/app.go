@@ -34,20 +34,14 @@ func New(config common.Config) *app {
 	connect.SetMaxIdleConns(MaxIdleConns)
 	connect.SetConnMaxLifetime(ConnMaxLifetime)
 
-	app := app{
+	return &app{
 		config:  config,
 		connect: connect,
 		plugins: []plugin{
 			email.New(config),
+			telegram.New(config, connect),
 		},
 	}
-
-	if bot, err := telegram.New(config, connect); err == nil {
-
-		app.plugins = append(app.plugins, bot)
-	}
-
-	return &app
 }
 
 type plugin interface {

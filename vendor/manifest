@@ -15,6 +15,12 @@
 			"path": "/spew"
 		},
 		{
+			"importpath": "github.com/erikstmartin/go-testdb",
+			"repository": "https://github.com/erikstmartin/go-testdb",
+			"revision": "8d10e4a1bae52cd8b81ffdec3445890d6dccab3d",
+			"branch": "master"
+		},
+		{
 			"importpath": "github.com/flosch/pongo2",
 			"repository": "https://github.com/flosch/pongo2",
 			"revision": "7f5515449ea9bbeb00256d9cbb654c556e7d0146",

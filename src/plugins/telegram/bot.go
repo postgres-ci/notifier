@@ -14,14 +14,14 @@ const (
 	Method = "telegram"
 )
 
-func New(config common.Config, connect *sqlx.DB) (*bot, error) {
+func New(config common.Config, connect *sqlx.DB) *bot {
 
 	if config.Telegram.Token == "" {
 
 		return &bot{
 			config:  config,
 			connect: connect,
-		}, nil
+		}
 	}
 
 	telegramBot, err := telebot.NewBot(config.Telegram.Token)
@@ -30,7 +30,10 @@ func New(config common.Config, connect *sqlx.DB) (*bot, error) {
 
 		log.Warnf("Telegram Bot: %v", err)
 
-		return nil, err
+		return &bot{
+			config:  config,
+			connect: connect,
+		}
 	}
 
 	bot := &bot{
@@ -47,7 +50,7 @@ func New(config common.Config, connect *sqlx.DB) (*bot, error) {
 		go bot.listen()
 	}
 
-	return bot, nil
+	return bot
 }
 
 type bot struct {
