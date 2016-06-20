@@ -23,7 +23,7 @@ const emailBodyTpl = `
 
 <pre>{{ build.CommitMessage }}</pre>
 
-sha: {% if APP_ADDRESS %}<a href="{{APP_ADDRESS}}/project-{{ build.ProjectID }}/build-{{ build.ID }}/">{{ build.CommitSHA }}</a>{% else %}{{ build.CommitSHA }}{% endif %}
+commit: {% if APP_ADDRESS %}<a href="{{APP_ADDRESS}}/project-{{ build.ProjectID }}/build-{{ build.ID }}/">{{ build.CommitSHA }}</a>{% else %}{{ build.CommitSHA }}{% endif %}
 
 </body>
 
